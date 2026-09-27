@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kcptun-manager"
+version = "4.0.0"
+description = "eXtreme KCPTun Manager — Multi-Protocol KCP Tunnel Manager with HAProxy aggregation"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "URT19"}]
+
+dependencies = []
+
+[project.scripts]
+kcptun-manager = "kcptun_manager.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["kcptun_manager*"]
