@@ -32,25 +32,6 @@ sudo bash install.sh
 sudo kcptun-manager
 ```
 
-**با wget:**
-
-```bash
-wget https://github.com/user-attachments/files/32732219/kcptun-manager-pkg.tar.gz
-tar -xzf kcptun-manager-pkg.tar.gz
-cd kcptun-pkg
-sudo bash install.sh
-sudo kcptun-manager
-```
-
-### نصب از گیت
-
-```bash
-git clone https://github.com/URT19/eXT_kcptun_Manager.git
-cd eXT_kcptun_Manager
-sudo bash install.sh
-sudo kcptun-manager
-```
-
 ### دستورات بعد از نصب
 
 ```bash
