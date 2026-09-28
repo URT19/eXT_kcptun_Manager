@@ -14,7 +14,18 @@ authors = [{name = "URT19"}]
 dependencies = []
 
 [project.scripts]
+# اصلی — نام درست
+kcptun-cli = "kcptun_manager.cli:main"
 kcptun-manager = "kcptun_manager.cli:main"
+kcptun-tuner = "kcptun_manager.ui.tuner_ui:run_tuner_ui"
+kcptun-uninstall = "kcptun_manager.ui.uninstall:run_uninstall"
+kcptun-export = "kcptun_manager.export:main"
+
+# Alias سازگاری با نسخه قدیمی FRP — در نسخه 5 حذف می‌شود
+frp-cli = "kcptun_manager.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["kcptun_manager*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "kcptun_manager.__version__"}
