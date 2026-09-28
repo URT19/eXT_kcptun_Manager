@@ -238,6 +238,3 @@ Entekhab [1]:
 ```
 Result   :    321.00 Mbit/s
 ```
-```
-
-render_file<file_path>/home/workdir/artifacts/README.md</file_path>
