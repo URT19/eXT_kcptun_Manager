@@ -44,14 +44,8 @@ sudo bash install.sh
 sudo kcptun-manager
 ```
 
-### نصب از گیت
+----
 
-```bash
-git clone https://github.com/URT19/eXT_kcptun_Manager.git
-cd eXT_kcptun_Manager
-sudo bash install.sh
-sudo kcptun-manager
-```
 
 ### پس از نصب
 
