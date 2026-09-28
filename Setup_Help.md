@@ -102,6 +102,31 @@ IP server kharej: 18.161.148.56
 Port target rooye kharej (mesl 443) [443]:
 Port voroodi rooye IRAN (frontend HAProxy) [443]:
 Tedad tunnel-ha [4]:
+<<<<<<< HEAD
+=======
+```
+
+بعدی ها دیگه تنظیمات تامل هست، من همه مقادیر رو پیش فرض وارد میکنم، اگه مقادیر بهتری براتون جواب میده، خودتون تغییر بدید
+
+در نهایت من اینا رو وارد کردم
+
+مقادیر بهینه رو میتونید با استفاده از این اسکریپتی که نوشتم پیدا کنید 
+```
+https://github.com/URT19/MyLinuxTools/tree/main/KCP_Tunnel_Benchmark
+```
+
+
+
+```
+····························································
+  Sakht connection jadid (IRAN)
+····························································
+  Esme connection (a-z 0-9 _ -): arvan21-hetzner56
+  IP server kharej: 18.161.148.56
+  Port target rooye kharej (mesl 443) [443]:
+  Port voroodi rooye IRAN (frontend HAProxy) [443]:
+  Tedad tunnel-ha [4]:
+>>>>>>> 00a57ad222642c20317b63b2385250173e7b2067
 
 [INFO] Tanzimate kcptun (Enter = default):
     crypt [aes-128]:
