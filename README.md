@@ -1,16 +1,13 @@
-# 🚀 eXtreme KCPTun Manager v4.0
+# kcptun-rs Manager
 
-**مدیر پیشرفته تونل KCPTun با تجمیع HAProxy**
+**نسخه پایدار و تست‌شده: `2.7.2`**
 
-[![Version](https://img.shields.io/badge/version-4.0.0-blue?style=for-the-badge)](https://github.com/URT19/eXT_kcptun_Manager)
-[![Python](https://img.shields.io/badge/python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Ubuntu](https://img.shields.io/badge/ubuntu-22.04%20%7C%2024.04-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)](https://ubuntu.com/)
-[![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE)
+مدیر تونل kcptun با تجمیع HAProxy و رابط تعاملی (TUI).  
+طراحی‌شده برای لینک **ایران ⇄ خارج (Kharej)**؛ سرور ایران به‌عنوان رله عمل می‌کند و ترافیک را از چند تونل kcptun به سرور خارج می‌فرستد.
 
-مدیر تونل **KCPTun** مبتنی بر **kcptun-rs** (Rust) با **تجمیع HAProxy**  
-و معماری **مسیر / کانال (Route / Channel)** — طراحی‌شده برای مسیریابی ترافیک **ایران ← خارج**.
+[📥 نصب](#-نصب) · [🚀 راه‌اندازی سریع](#-راه‌اندازی-سریع) · [✨ قابلیت‌ها](#-قابلیت‌ها) · [⌨️ منو](#️-منو) · [🧠 معماری](#-معماری) · [📁 ساختار](#-ساختار-فایل‌ها)
 
-[📥 نصب](#-نصب) · [✨ ویژگی‌ها](#-ویژگی‌ها) · [🧠 معماری](#-معماری) · [⌨️ منو](#️-منو) · [📁 ساختار](#-ساختار-فایل‌ها)
+> راهنمای تصویری و گام‌به‌گام تست‌شده: **[Setup_Help.md](Setup_Help.md)**
 
 ---
 
@@ -18,11 +15,22 @@
 
 ### پیش‌نیازها
 
-- اوبونتو ۲۲.۰۴ / ۲۴.۰۴ (یا دبیان ۱۲+)
+- Ubuntu 22.04 / 24.04 (یا Debian-based)
 - دسترسی root
-- پایتون ۳.۱۰+
+- `python3` 3.10+
 
-### نصب سریع (پکیج)
+### نصب سریع (پکیج رسمی)
+
+**با curl:**
+
+```bash
+curl -fsSL -o kcptun-manager-pkg.tar.gz \
+  https://github.com/user-attachments/files/32732219/kcptun-manager-pkg.tar.gz
+tar -xzf kcptun-manager-pkg.tar.gz
+cd kcptun-pkg
+sudo bash install.sh
+sudo kcptun-manager
+```
 
 **با wget:**
 
@@ -34,131 +42,186 @@ sudo bash install.sh
 sudo kcptun-manager
 ```
 
-**با curl:**
+### نصب از گیت
 
 ```bash
-curl -fsSL -o kcptun-manager-pkg.tar.gz https://github.com/user-attachments/files/32732219/kcptun-manager-pkg.tar.gz
-tar -xzf kcptun-manager-pkg.tar.gz
-cd kcptun-pkg
+git clone https://github.com/URT19/eXT_kcptun_Manager.git
+cd eXT_kcptun_Manager
 sudo bash install.sh
 sudo kcptun-manager
 ```
 
-----
-
-
-### پس از نصب
-
-در اولین اجرا نقش را انتخاب کنید (**IRAN** یا **KHAREJ**)، سپس گزینه **۱ (Initialize)** را بزنید تا باینری‌های kcptun دریافت شوند.
+### دستورات بعد از نصب
 
 ```bash
-# میانبر TUI
-sudo kcptun
-
-# نسخه
+sudo kcptun-manager    # منوی تعاملی (TUI)
+sudo kcptun            # میانبر همان منو
 kcptun-manager version
+kcptun-manager export [--name NAME] [--out DIR]
 ```
 
 ---
 
-## ✨ ویژگی‌ها
+## 🚀 راه‌اندازی سریع
 
-| ⚡ موتور تونل | ⚖️ تجمیع HAProxy | 🎯 تجربه کاربری |
-|---|---|---|
-| پشتیبانی کامل از **kcptun-rs** (Rust) | توزیع ترافیک روی چند کانال موازی | ویزارد سریع Node + Route |
-| Auto-Tuner (بهینه‌ساز mode / mtu / window / sockbuf) | تجمیع پهنای‌باند از چند سرور خارج | دو زبانه (فینگلیش / انگلیسی) |
-| پارامترها: mode, mtu, sndwnd, rcvwnd, sockbuf, FEC, SMUX v2 | Failover خودکار | Export/Import فشرده بین ایران و خارج |
-| Pre-flight UDP check | Round-robin / leastconn / source | Backup وضعیت و Reset |
-| CPU diagnostic | مسیر ساده و مسیر متوازن (Balanced) | بهینه‌سازی sysctl سیستم |
+این خلاصهٔ همان جریان تست‌شده در [Setup_Help.md](Setup_Help.md) است. روی **هر دو سرور** (ایران و خارج) نصب را انجام دهید.
+
+### ۱) انتخاب نقش
+
+در اولین اجرا:
+
+```text
+1) IRAN   (relay + HAProxy + kcptun-client)
+2) KHAREJ (exit + kcptun-server)
+```
+
+### ۲) Initialize (روی هر دو سرور)
+
+منو → **`[1] Nasb / Initialize`**  
+باینری‌های kcptun و قالب‌های systemd نصب می‌شوند.
+
+### ۳) ساخت اتصال روی ایران
+
+منو ایران → **`[2] Sakht connection jadid`**
+
+نمونه ورودی‌ها:
+
+| سؤال | مثال / پیش‌فرض |
+|------|----------------|
+| اسم connection | `arvan21-hetzner56` |
+| IP سرور خارج | `x.x.x.x` |
+| Port target روی خارج | `443` |
+| Port ورودی ایران (HAProxy) | `443` |
+| تعداد تونل‌ها | `4` (۱ تا ۲۰) |
+| crypt / mode / mtu / ... | Enter = پیش‌فرض |
+
+بعد از ساخت، منو → **`[3] Export baraye KHAREJ`** و blob را کپی کنید.
+
+### ۴) Import روی خارج
+
+منو خارج → **`[2] Import data az IRAN`**  
+blob را paste کنید → Enter. سرویس‌های `kcptun-server` ساخته و بالا می‌آیند.
+
+### ۵) استفاده
+
+در کانفیگ کلاینت/پنل، به‌جای IP سرور خارج، **IP سرور ایران** و همان پورت frontend را بگذارید.
+
+### ۶) تست سرعت (اختیاری)
+
+1. **خارج** → `[10] Speedtest` → `1) Start server` → اتصال مورد نظر  
+2. **ایران** → `[11] Speedtest` → `1) Run test` → تست HAProxy یا تک‌کانال  
+
+جزئیات و اسکرین‌شات‌ها در [Setup_Help.md](Setup_Help.md).
+
+---
+
+## ✨ قابلیت‌ها
+
+- **TUI تعاملی** با لوگو رنگی و منوی دوستونه
+- **HAProxy** جلوی چند تونل kcptun (round-robin)
+- **سرویس systemd جدا** برای هر کانال (main + test)
+- **Speedtest** سه‌حالته: HAProxy تجمیعی / تک‌تونل / پورت دلخواه
+- **Export / Import** متادیتای اتصال بین ایران و خارج
+- **Backup نسخه‌بندی‌شده** (حداکثر ۲۰ نسخه برای هر فایل)
+- **Export امن برنامه** بدون کلید، IP و state
+
+---
+
+## ⌨️ منو
+
+### ایران (رله + HAProxy)
+
+| #  | آیتم                    | بخش        |
+|----|-------------------------|------------|
+| 1  | Nasb / Initialize       | Setup      |
+| 2  | Sakht connection jadid  | Setup      |
+| 3  | Export baraye KHAREJ    | Setup      |
+| 4  | List connection-ha      | Management |
+| 5  | Edit connection         | Management |
+| 6  | Namayesh config-ha      | Management |
+| 7  | Hazf connection         | Management |
+| 8  | kcptun-client services  | Services   |
+| 9  | HAProxy                 | Services   |
+| 10 | Firewall                | Services   |
+| 11 | Speedtest               | Tools      |
+| 12 | Migrate connection-ha   | Tools      |
+| 13 | Backup / Restore        | Tools      |
+| 14 | Taghir-e Role be KHAREJ | Tools      |
+
+### خارج / Kharej (خروجی)
+
+| #  | آیتم                    | بخش        |
+|----|-------------------------|------------|
+| 1  | Nasb / Initialize       | Setup      |
+| 2  | Import data az IRAN     | Management |
+| 3  | List connection-ha      | Management |
+| 4  | Edit connection         | Management |
+| 5  | Hazf connection         | Management |
+| 6  | Namayesh config-ha      | Management |
+| 7  | kcptun-server services  | Services   |
+| 8  | Firewall                | Tools      |
+| 9  | Backup / Restore        | Tools      |
+| 10 | Speedtest               | Tools      |
+| 11 | Taghir-e Role be IRAN   | Tools      |
 
 ---
 
 ## 🧠 معماری
 
 ```text
-Client → Iran:Entry → HAProxy → N × kcptun-client → Kharej:kcptun-server → Xray / Target
+      users
+        │
+        ▼
+   ┌─────────────┐     HAProxy (round-robin)    ┌──────────────────────┐
+   │  :443       │ ──────► ch1 ──┐              │  kcptun-server@...   │
+   │  HAProxy    │ ──────► ch2 ──┼── kcptun ──► │  127.0.0.1:443       │
+   │  (IRAN)     │ ──────► ch3 ──┘   (KCP)      │  (target / Xray)     │
+   └─────────────┘                              └──────────────────────┘
+        Iran (relay)                               Kharej (exit)
 ```
 
-| اصطلاح      | معنی                                                              |
-|-------------|-------------------------------------------------------------------|
-| **Hub**     | سرور ایران — اینجا `kcptun-client` و HAProxy اجرا می‌شود         |
-| **Node**    | سرور خارج — اینجا `kcptun-server` گوش می‌دهد                     |
-| **Route**   | یک پورت عمومی روی Hub که به یک یا چند کانال نگاشت می‌شود         |
-| **Channel** | یک تونل kcptun تکی بین Hub و یک Node                             |
+هر connection شامل **N کانال** است:
 
-- **Simple Route**: یک کانال به یک Node  
-- **Balanced Route**: چند کانال موازی (تجمیع با HAProxy)
-
----
-
-## ⌨️ منو
-
-```
-  [ 1] نصب باینری‌ها              [10] Auto-Tuner
-  [ 2] ویزارد                     [11] Speedtest
-  [ 3] مدیریت Nodeها              [12] بهینه‌سازی سیستم
-  [ 4] مسیر ساده (Simple)         [13] Backup
-  [ 5] مسیر متوازن (Balanced)     [14] Reset
-  [ 6] لیست Routeها               [15] زبان (fa/en)
-  [ 7] Export (برای خارج)         [16] راهنما
-  [ 8] Import (از ایران)          [17] Uninstall
-  [ 9] مدیریت Channelها           [ 0] خروج
-```
-
-### جریان پیشنهادی
-
-1. روی **ایران (Hub)**: گزینه `1` → نصب باینری‌ها  
-2. گزینه `2` (ویزارد) یا دستی: Node + Route بسازید  
-3. گزینه `7` → Export فشرده را کپی کنید  
-4. روی **خارج (Node)**: گزینه `8` → Import و راه‌اندازی سرور  
-5. در صورت نیاز گزینه `10` (Auto-Tuner) برای یافتن بهترین پارامترها  
+- **تونل main** — ترافیک واقعی کاربران  
+- **تونل test** — مخصوص Speedtest (iperf3)
 
 ---
 
 ## 📁 ساختار فایل‌ها
 
 ```text
-/opt/kcptun-manager/
-├── bin/                    # باینری‌های kcptun-client / kcptun-server
-├── data/
-│   ├── state.json          # وضعیت (nodes, routes, channels)
-│   ├── configs/
-│   ├── haproxy/
-│   ├── exports/
-│   ├── backups/
-│   ├── logs/
-│   └── env/
-├── venv/                   # محیط مجازی پایتون
-└── kcptun_manager/         # کد برنامه
+/opt/kcptun-manager/              برنامه (پایتون + helper)
+/opt/kcptun-manager/bin/          kcptun-client / kcptun-server
+/opt/kcptun-manager/VERSION       نسخه (2.7.2)
 
-/usr/local/bin/
-├── kcptun-manager          # نقطه ورود اصلی
-├── frp-cli                 # نام مستعار
-├── kcptun-tuner            # اجرای مستقیم Tuner
-└── kcptun-uninstall        # حذف نصب
+/etc/kcptun-manager/              role + connections.json
+/etc/kcptun-manager/instances/    فایل‌های .env هر تونل
+/etc/haproxy/haproxy.cfg          کانفیگ تولیدشده HAProxy
+
+/etc/systemd/system/kcptun-client@.service
+/etc/systemd/system/kcptun-server@.service
+
+/var/backups/kcptun-manager/      بک‌آپ‌های نسخه‌بندی‌شده
+/var/lock/kcptun-manager.lock
+
+/usr/local/bin/kcptun-manager
+/usr/local/bin/kcptun
 ```
 
 ---
 
-## 🔧 دستورات مفید
+## 🔒 حریم خصوصی
 
-```bash
-# وضعیت سرویس‌ها
-systemctl status 'kcptun-client-*' 'kcptun-server-*' haproxy-kcptun-agg
+دستور `kcptun-manager export` این موارد را **هرگز** داخل آرشیو نمی‌گذارد:
 
-# لاگ زنده
-journalctl -u 'kcptun-client-*' -f
+- `connections.json` و role  
+- `instances/*.env`  
+- `haproxy.cfg`  
+- بک‌آپ‌ها، لاگ‌ها و فایل‌های `.b64`
 
-# فایل وضعیت
-cat /opt/kcptun-manager/data/state.json
-
-# بک‌آپ دستی (از داخل منو هم موجود است)
-ls /opt/kcptun-manager/data/backups/
-```
+آرشیو برنامه برای انتشار عمومی امن است.
 
 ---
-
-##
 
 ## 📜 مجوز
 
@@ -166,4 +229,5 @@ MIT
 
 ---
 
-**مخزن:** [github.com/URT19/eXT_kcptun_Manager](https://github.com/URT19/eXT_kcptun_Manager)
+**مخزن:** [github.com/URT19/eXT_kcptun_Manager](https://github.com/URT19/eXT_kcptun_Manager)  
+**راهنمای تست‌شده:** [Setup_Help.md](Setup_Help.md)
