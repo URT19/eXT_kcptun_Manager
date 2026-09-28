@@ -19,6 +19,9 @@ sudo kcptun-manager
 
 در اولین اجرا از شما نقش سرور را می‌پرسد (ایران یا خارج).
 
+
+<img width="578" height="215" alt="image" src="https://github.com/user-attachments/assets/7bd1de36-16b0-4915-9ae8-07306009516b" />
+
 **مثال برای سرور ایران:**
 
 ```
@@ -30,6 +33,7 @@ sudo kcptun-manager
 ```
 Role: IRAN
 ```
+<img width="697" height="669" alt="image" src="https://github.com/user-attachments/assets/676c18bc-9990-47b1-a439-e09fcb9380de" />
 
 همین کار را برای سرور خارج انجام دهید:
 
@@ -46,6 +50,7 @@ Role: KHAREJ
 ```
 [ 1] Nasb / Initialize
 ```
+<img width="707" height="239" alt="image" src="https://github.com/user-attachments/assets/984f4ec5-89af-4c0f-b672-9023ff47cfeb" />
 
 این گزینه فایل‌های لازم را نصب می‌کند.
 
@@ -159,6 +164,7 @@ Taeed mishe? (y/n) [y]:
 ```
 [ 3] Export baraye KHAREJ
 ```
+<img width="905" height="419" alt="image" src="https://github.com/user-attachments/assets/444257e2-6e6f-45fa-8d1e-9f0bba310171" />
 
 شماره اتصال مورد نظر را وارد کنید (مثلاً `1`). یک متن Base64 نمایش داده می‌شود که باید کپی کنید.
 
@@ -177,6 +183,8 @@ Taeed mishe? (y/n) [y]:
 ```
 Base64 blob ra paste konid va Enter bezanid:
 ```
+
+<img width="726" height="463" alt="image" src="https://github.com/user-attachments/assets/466091f8-53b2-4f1f-a69e-efd4855e6346" />
 
 پس از اتمام، پیام موفقیت نمایش داده می‌شود. Enter بزنید.
 
@@ -202,6 +210,7 @@ Mode-e server:
 Entekhab [1]: 1
 ```
 
+<img width="756" height="384" alt="image" src="https://github.com/user-attachments/assets/fd1e97df-a748-4cc1-bbcf-37cacf9de91b" />
 ### روی سرور ایران
 
 1. گزینه `[11] Speedtest` را انتخاب کنید.
@@ -222,6 +231,9 @@ Entekhab [1]:
 7. تعداد استریم همزمان را وارد کنید (برای تست تجمیعی، حداقل برابر تعداد تانل‌ها بگذارید).
 
 نمونه نتیجه:
+
+<img width="639" height="645" alt="image" src="https://github.com/user-attachments/assets/a57a1c1a-5a35-496d-9f18-dd576a68d1e8" />
+
 
 ```
 Result   :    321.00 Mbit/s
