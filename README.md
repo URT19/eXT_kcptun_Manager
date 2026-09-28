@@ -1,259 +1,251 @@
-<div align="center">
+# kcptun-rs Manager
 
-# 🚀 eXtreme KCPTun Manager v4.0
+مدیر تونل چندپروتکلی با تجمیع HAProxy، تونل kcptun و رابط تعاملی (TUI).
 
-**مدیر پیشرفته تونل KCPTun با تجمیع HAProxy**
+طراحی‌شده برای استقرار لینک **ایران ⇄ خارج (Kharej)**؛ جایی که سرور ایران به‌عنوان رله عمل می‌کند و ترافیک کاربران را از طریق چند تونل kcptun به سرور خارج (خروجی / exit) می‌فرستد.
 
-[![Version](https://img.shields.io/badge/version-4.0.0-blue?style=for-the-badge)](https://github.com/URT19/eXT_kcptun_Manager)
-[![Python](https://img.shields.io/badge/python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Ubuntu](https://img.shields.io/badge/ubuntu-22.04%20%7C%2024.04-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)](https://ubuntu.com/)
-[![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE)
-
-مدیر تونل **KCPTun** مبتنی بر **kcptun-rs** (Rust) با **تجمیع HAProxy**  
-و معماری **مسیر/کانال (Route/Channel)** — طراحی‌شده برای مسیریابی ترافیک ایران ← خارج.
-
-[📥 نصب](#-نصب) · [ویژگی‌ها](#-ویژگی‌ها) · [معماری](#-معماری) · [استفاده](#-استفاده)
-
-</div>
+**نسخه فعلی:** `2.7.2`
 
 ---
 
-## 📥 نصب
+## قابلیت‌ها
 
-### پیش‌نیازها
-- اوبونتو ۲۲.۰۴ / ۲۴.۰۴ (یا دبیان ۱۲+)
+- **رابط تعاملی (TUI)** با لوگو رنگی، منوی دوستونه و تأیید تک‌کلیدی
+- **HAProxy** در جلوی چند تونل kcptun برای توزیع بار (round-robin)
+- **سرویس‌های systemd جداگانه** برای هر تونل (کانال اصلی + کانال تست)
+- **منوی Speedtest** با سه حالت:
+  - تست نود از طریق HAProxy (همه کانال‌ها با هم)
+  - تست تک‌تونل (اصلی یا تست)
+  - تست پورت دلخواه
+- **بک‌آپ نسخه‌بندی‌شده** از هر فایلی که تغییر می‌کند (حداکثر ۲۰ نسخه برای هر فایل)
+- **Export / Import** متادیتای اتصال بین ایران و خارج
+- **CLI مستقل** (`kcptun-manager export`) برای بسته‌بندی ابزار روی سرور جدید
+- **بدون داده خصوصی در export** — کلیدها، IPها و وضعیت اتصالات حذف می‌شوند
+
+---
+
+## پیش‌نیازها
+
+- Ubuntu 22.04 / 24.04 (یا هر توزیع مبتنی بر Debian)
+- `python3` (۳.۱۰ به بالا)، `curl`، `wget`، `unzip`، `iperf3`، `iproute2`
+- برای نقش ایران: `haproxy`
 - دسترسی root
-- پایتون ۳.۱۰+
-- حداقل ۱ گیگابایت رم
 
-### نصب سریع
+نصب‌کننده این وابستگی‌ها را به‌صورت خودکار نصب می‌کند.
+
+---
+
+## نصب
+
+### روش ۱ — با اسکریپت `install.sh` (پیشنهادی)
+
+فایل `install.sh` را همراه با آرشیو روی سرور جدید قرار دهید و اجرا کنید:
 
 ```bash
-git clone https://github.com/URT19/eXT_kcptun_Manager.git
-cd eXT_kcptun_Manager
-sudo bash install.sh
+# آرشیو و install.sh را در /root کپی کنید، سپس:
+chmod +x install.sh
+sudo ./install.sh /root/kcptun-manager-export-v2.7.2-*.tar.gz
 ```
 
-پس از نصب:
+اسکریپت خودش extract، نصب وابستگی‌ها، ساخت پوشه‌ها، reload سرویس‌ها و ساخت دستور سراسری را انجام می‌دهد.
+
+### روش ۲ — دستی از روی tar.gz
+
+**روی سرور مبدأ (اختیاری — برای ساخت آرشیو):**
 
 ```bash
-sudo frp-cli          # یا sudo kcptun-manager
+kcptun-manager export
+# خروجی: /root/kcptun-manager-export-vX.Y.Z-YYYYMMDD-HHMMSS.tar.gz
 ```
 
-دستورات نصب‌شده:
-| دستور | توضیح |
-|-------|--------|
-| `frp-cli` / `kcptun-manager` | منوی اصلی |
-| `kcptun-tuner` | رابط Auto-Tuner |
-| `kcptun-uninstall` | حذف کامل |
-
----
-
-## ✨ ویژگی‌ها
-
-<table>
-<tr>
-<td width="50%">
-
-### ⚡ موتور تونل
-- پشتیبانی کامل از **kcptun-rs** (Rust — تا ۵× سریع‌تر از نسخه Go)
-- Auto-Tuner پیشرفته (پورت پایتون از `kcptun-rs-optimizer`)
-- پارامترهای قابل تنظیم: mode, mtu, sndwnd, rcvwnd, sockbuf, FEC, SMUX v2
-- Pre-flight UDP check
-- CPU diagnostic
-
-### ⚖️ تجمیع HAProxy
-- توزیع ترافیک روی چند کانال موازی
-- تجمیع پهنای‌باند از چند سرور خارج
-- Failover خودکار
-- الگوریتم‌های Round-robin / leastconn / source
-
-</td>
-<td width="50%">
-
-### 🎯 معماری Route/Channel
-- **Simple Route**: یک کانال مستقیم
-- **Balanced Route**: چند کانال + HAProxy
-- ساخت Node + Route با ویزارد یکپارچه
-- Export/Import فشرده (Compact) بین ایران و خارج
-
-### 🎨 رابط کاربری
-- دو زبانه (فینگلیش / انگلیسی)
-- منوی رنگی و جداول وضعیت زنده
-- پشتیبان‌گیری و ریست آسان
-- بهینه‌سازی sysctl یک‌کلیکی
-
-</td>
-</tr>
-</table>
-
----
-
-## 🧠 معماری
-
-```text
-Client → Iran:Entry → HAProxy → N × kcptun-client → Kharej:kcptun-server → Xray/Target
-```
-
-| اصطلاح     | معنی                                                      |
-|------------|-----------------------------------------------------------|
-| **Hub**    | سرور ایران (kcptun-client + HAProxy اینجا اجرا می‌شود)   |
-| **Node**   | سرور خارج (kcptun-server اینجا گوش می‌دهد)               |
-| **Route**  | یک پورت عمومی روی Hub که به یک یا چند کانال نگاشت می‌شود |
-| **Channel**| یک تونل kcptun تکی بین Hub و یک Node                     |
-
-### حالت‌های Route
-
-| حالت      | تعداد کانال | HAProxy | کاربرد                              |
-|-----------|-------------|---------|-------------------------------------|
-| Simple    | ۱           | ✗       | ترافیک سبک، راه‌اندازی سریع         |
-| Balanced  | N (۲+)      | ✓       | پهنای‌باند بالا، HA، چند نود        |
-
----
-
-## 🚀 شروع سریع
+**کپی به سرور جدید:**
 
 ```bash
-# ۱. نصب
-sudo bash install.sh
-
-# ۲. اجرا
-sudo frp-cli
-
-# ۳. استفاده از ویزارد (پیشنهادی)
-# منوی [2] → پاسخ به سؤالات
+scp /root/kcptun-manager-export-*.tar.gz root@NEW_SERVER:/root/
 ```
 
-جریان پیشنهادی:
-1. `[1]` نصب باینری‌های kcptun-rs
-2. `[2]` ویزارد → ساخت Node + Route
-3. `[7]` خروجی Compact از ایران
-4. روی سرور خارج: `[8]` وارد کردن Compact
-5. `[9]` مدیریت کانال‌ها (Start/Stop)
-6. `[10]` Auto-Tuner برای بهینه‌سازی پارامترها
-
----
-
-## 📋 چیدمان منو
-
-```text
-  [ 1]  نصب KCPTun (kcptun-rs)
-  [ 2]  ویزارد (سریع)                  ← پیشنهادی
-  [ 3]  مدیریت Node-ها
-  [ 4]  ساخت Simple Route
-  [ 5]  ساخت Balanced Route
-  [ 6]  مدیریت Route-ها
-  [ 7]  خروجی برای Node (Compact)
-  [ 8]  ورودی روی Node
-  [ 9]  مدیریت Channel-ها
-  [10]  Auto-Tuner
-  [11]  تست سرعت
-  [12]  بهینه‌سازی سیستم (sysctl)
-  [13]  پشتیبان‌گیری
-  [14]  ریست
-  [15]  زبان (فینگلیش / انگلیسی)
-  [16]  راهنما
-  [17]  حذف نصب
-  [ 0]  خروج
-```
-
----
-
-## 🎮 استفاده
+**روی سرور جدید:**
 
 ```bash
-sudo frp-cli              # منوی اصلی
-sudo kcptun-manager       # همان منوی اصلی
-sudo kcptun-tuner         # رابط Auto-Tuner مستقیم
-sudo kcptun-uninstall     # حذف کامل
+# (الف) استخراج
+cd / && tar -xzf /root/kcptun-manager-export-*.tar.gz
+
+# (ب) نصب وابستگی‌ها
+apt-get update
+apt-get install -y python3 curl wget unzip iperf3 haproxy iproute2
+
+# (ج) ساخت پوشه‌های اجرایی
+mkdir -p /etc/kcptun-manager/instances
+mkdir -p /etc/kcptun-manager/haproxy
+mkdir -p /opt/kcptun-manager/bin
+mkdir -p /var/lock /var/backups/kcptun-manager
+
+# (د) بارگذاری مجدد systemd
+systemctl daemon-reload
+
+# (ه) اجرای مدیر
+python3 -u /opt/kcptun-manager/kcptun_manager.py
 ```
 
-### خروجی و استقرار (Export / Import)
+در اولین اجرا نقش را انتخاب کنید (**IRAN** یا **KHAREJ**)، سپس از گزینه **۱) نصب / Initialize** برای دریافت باینری‌های kcptun استفاده کنید.
 
-**روی Hub (ایران):**
+### دستور سراسری (اختیاری)
+
 ```bash
-sudo frp-cli
-# منوی [7] → انتخاب نود → کپی خروجی Compact
+cat > /usr/local/bin/kcptun << 'EOF'
+#!/usr/bin/env bash
+exec python3 -u /opt/kcptun-manager/kcptun_manager.py "$@"
+EOF
+chmod +x /usr/local/bin/kcptun
+
+# بعد فقط بنویسید:
+kcptun
 ```
 
-**روی Node (خارج):**
+برای CLI کامل‌تر:
+
 ```bash
-sudo frp-cli
-# منوی [8] → چسباندن Compact → خط خالی برای پایان
+cat > /usr/local/bin/kcptun-manager << 'EOF'
+#!/usr/bin/env bash
+exec python3 -u /opt/kcptun-manager/cli.py "$@"
+EOF
+chmod +x /usr/local/bin/kcptun-manager
 ```
 
 ---
 
-## 🔧 Auto-Tuner
-
-ابزار هوشمند برای پیدا کردن بهترین ترکیب پارامترهای KCP:
-
-- mode (fast3 / fast2 / fast / normal)
-- MTU
-- Send/Receive Window
-- Socket Buffer
-- FEC Data/Parity Shards
-- SMUX version
-- Compression
+## CLI
 
 ```bash
-sudo kcptun-tuner
-# یا از منوی [10]
+kcptun-manager export [--name NAME] [--out DIR] [--quiet]
+kcptun-manager version
+kcptun-manager help
+kcptun-manager                # اجرای منوی تعاملی
+```
+
+دستور `export` فایل  
+`/root/kcptun-manager-<name>-v<version>-<ts>.tar.gz`  
+می‌سازد که فقط برنامه را شامل می‌شود — بدون کلید، بدون IP و بدون وضعیت اتصالات. دستورات نصب روی سرور جدید هم چاپ می‌شود.
+
+---
+
+## نمای کلی منو
+
+### ایران (رله / سمت HAProxy)
+
+| #  | آیتم                      | بخش        |
+|----|---------------------------|------------|
+| 1  | نصب / Initialize          | Setup      |
+| 2  | ساخت connection جدید      | Setup      |
+| 3  | Export برای KHAREJ        | Setup      |
+| 4  | لیست connectionها         | Management |
+| 5  | ویرایش connection         | Management |
+| 6  | نمایش configها            | Management |
+| 7  | حذف connection            | Management |
+| 8  | سرویس‌های kcptun-client   | Services   |
+| 9  | HAProxy                   | Services   |
+| 10 | Firewall                  | Services   |
+| 11 | Speedtest                 | Tools      |
+| 12 | مهاجرت connectionها       | Tools      |
+| 13 | Backup / Restore          | Tools      |
+| 14 | تغییر نقش به KHAREJ       | Tools      |
+
+### خارج / Kharej (سمت خروجی)
+
+| #  | آیتم                      | بخش        |
+|----|---------------------------|------------|
+| 1  | نصب / Initialize          | Setup      |
+| 2  | Import داده از IRAN       | Management |
+| 3  | لیست connectionها         | Management |
+| 4  | ویرایش connection         | Management |
+| 5  | حذف connection            | Management |
+| 6  | نمایش configها            | Management |
+| 7  | سرویس‌های kcptun-server   | Services   |
+| 8  | Firewall                  | Tools      |
+| 9  | Backup / Restore          | Tools      |
+| 10 | Speedtest                 | Tools      |
+| 11 | تغییر نقش به IRAN         | Tools      |
+
+---
+
+## ساختار فایل‌ها
+
+```
+/opt/kcptun-manager/              برنامه (کد پایتون + helperها)
+/opt/kcptun-manager/bin/          باینری‌های kcptun-client و kcptun-server
+/opt/kcptun-manager/VERSION       نسخه فعلی
+
+/etc/kcptun-manager/              داده‌های زمان اجرا (نقش، connections.json)
+/etc/kcptun-manager/instances/    فایل‌های .env هر تونل
+/etc/haproxy/haproxy.cfg          کانفیگ تولیدشده HAProxy
+
+/etc/systemd/system/kcptun-client@.service
+/etc/systemd/system/kcptun-server@.service
+
+/var/backups/kcptun-manager/      بک‌آپ‌های نسخه‌بندی‌شده
+/var/lock/kcptun-manager.lock     قفل انحصاری
+
+/usr/local/bin/kcptun-manager     نقطه ورود CLI
+/usr/local/bin/kcptun             میانبر → TUI
 ```
 
 ---
 
-## 📦 ساختار پروژه
+## معماری
 
-```text
-eXT_kcptun_Manager/
-├── install.sh
-├── pyproject.toml
-├── README.md
-└── kcptun_manager/
-    ├── cli.py                 # منوی اصلی
-    ├── models.py              # مدل‌های Node / Channel / Route
-    ├── kcptun/                # منطق اصلی kcptun
-    │   ├── builder.py
-    │   ├── installer.py
-    │   ├── deployer.py
-    │   ├── systemd.py
-    │   └── tuner.py           # Auto-Tuner
-    ├── haproxy/               # ساخت و مدیریت HAProxy
-    ├── system/                # شبکه، SSH، بهینه‌سازی
-    ├── i18n/                  # ترجمه‌ها (fa / en)
-    └── ui/                    # ویزارد، جداول، prompts
 ```
+      کاربران
+        │
+        ▼
+   ┌─────────────┐     HAProxy (round-robin)    ┌──────────────────────┐
+   │  :443       │ ──────► 31000 ──┐            │  kcptun-server@...   │
+   │  HAProxy    │ ──────► 31001 ──┼── kcptun ─►│  127.0.0.1:443       │
+   │             │ ──────► 31002 ──┘   (KCP)    │  (سرویس مقصد)        │
+   │             │ ──────► 31003 ──┐            └──────────────────────┘
+   └─────────────┘                │
+   ایران (رله)                 تونل‌های kcptun    خارج (خروجی)
+```
+
+هر connection شامل **N کانال** است. هر کانال دو تونل دارد:
+
+- **تونل اصلی (main)** — ترافیک واقعی کاربران (معمولاً به Xray)
+- **تونل تست (test)** — مخصوص speedtest (به iperf3)
 
 ---
 
-## 🛠️ عیب‌یابی
+## امنیت و حریم خصوصی
+
+دستور `export` هرگز این موارد را شامل نمی‌شود:
+
+- `connections.json`
+- فایل نقش (role)
+- `instances/*.env`
+- `haproxy.cfg`
+- بک‌آپ‌ها، لاگ‌های موقت یا فایل‌های `.b64`
+
+بنابراین آرشیو برای انتشار عمومی امن است.
+
+---
+
+## نسخه‌بندی
+
+برای تغییر نسخه:
 
 ```bash
-# نسخه
-frp-cli --version
-
-# وضعیت state
-cat /opt/kcptun-manager/data/state.json
-
-# سرویس‌ها
-systemctl status 'kcptun-client-*' 'kcptun-server-*' haproxy-kcptun-agg
-
-# لاگ زنده
-journalctl -u 'kcptun-client-*' -f
-journalctl -u 'kcptun-server-*' -f
+python3 -c "
+import sys; sys.path.insert(0,'/opt/kcptun-manager')
+from lib.backup import set_version, get_version
+set_version('2.8.0')
+print(get_version())
+"
 ```
+
+- **patch** — رفع باگ
+- **minor** — قابلیت جدید
+- **major** — تغییر ساختاری
 
 ---
 
-## 📄 لایسنس
+## مجوز
 
 MIT
-
----
-
-<div align="center">
-
-ساخته‌شده با ❤️ برای جامعه ایرانی
-
-</div>
