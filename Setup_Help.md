@@ -96,6 +96,13 @@ Tedad tunnel-ha [4]:
 
 در نهایت من اینا رو وارد کردم
 
+مقادیر بهینه رو میتونید با استفاده از این اسکریپتی که نوشتم پیدا کنید 
+```
+https://github.com/URT19/MyLinuxTools/tree/main/KCP_Tunnel_Benchmark
+```
+
+
+
 ```
 ····························································
   Sakht connection jadid (IRAN)
