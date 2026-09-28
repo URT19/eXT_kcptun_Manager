@@ -22,6 +22,7 @@ sudo kcptun-manager
 
 <img width="578" height="215" alt="image" src="https://github.com/user-attachments/assets/7bd1de36-16b0-4915-9ae8-07306009516b" />
 
+
 **مثال برای سرور ایران:**
 
 ```
@@ -33,7 +34,9 @@ sudo kcptun-manager
 ```
 Role: IRAN
 ```
+
 <img width="697" height="669" alt="image" src="https://github.com/user-attachments/assets/676c18bc-9990-47b1-a439-e09fcb9380de" />
+
 
 همین کار را برای سرور خارج انجام دهید:
 
@@ -50,7 +53,9 @@ Role: KHAREJ
 ```
 [ 1] Nasb / Initialize
 ```
+
 <img width="707" height="239" alt="image" src="https://github.com/user-attachments/assets/984f4ec5-89af-4c0f-b672-9023ff47cfeb" />
+
 
 این گزینه فایل‌های لازم را نصب می‌کند.
 
@@ -164,6 +169,7 @@ Taeed mishe? (y/n) [y]:
 ```
 [ 3] Export baraye KHAREJ
 ```
+
 <img width="905" height="419" alt="image" src="https://github.com/user-attachments/assets/444257e2-6e6f-45fa-8d1e-9f0bba310171" />
 
 شماره اتصال مورد نظر را وارد کنید (مثلاً `1`). یک متن Base64 نمایش داده می‌شود که باید کپی کنید.
@@ -211,6 +217,8 @@ Entekhab [1]: 1
 ```
 
 <img width="756" height="384" alt="image" src="https://github.com/user-attachments/assets/fd1e97df-a748-4cc1-bbcf-37cacf9de91b" />
+
+
 ### روی سرور ایران
 
 1. گزینه `[11] Speedtest` را انتخاب کنید.
